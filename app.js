@@ -21,23 +21,11 @@ const PAGE_CONFIGS = {
                 <h1>URL 编码/解码工具</h1>
                 <textarea id="input" placeholder="输入需要编码或解码的内容"></textarea>
                 <div>
-                    <button onclick="encode()">编码</button>
-                    <button onclick="decode()">解码</button>
+                    <button onclick="urlEncode()">编码</button>
+                    <button onclick="urlDecode()">解码</button>
                 </div>
                 <textarea id="output" placeholder="结果将显示在这里" readonly></textarea>
             </div>
-            <script>
-                function encode() {
-                    const input = document.getElementById('input').value;
-                    const output = encodeURIComponent(input);
-                    document.getElementById('output').value = output;
-                }
-                function decode() {
-                    const input = document.getElementById('input').value;
-                    const output = decodeURIComponent(input);
-                    document.getElementById('output').value = output;
-                }
-            </script>
         `
     },
     'json.html': {
@@ -47,22 +35,10 @@ const PAGE_CONFIGS = {
                 <h1>JSON 格式化工具</h1>
                 <textarea id="input" placeholder="输入需要格式化的JSON内容"></textarea>
                 <div>
-                    <button onclick="format()">格式化</button>
+                    <button onclick="formatJson()">格式化</button>
                 </div>
                 <textarea id="output" placeholder="结果将显示在这里" readonly></textarea>
             </div>
-            <script>
-                function format() {
-                    try {
-                        const input = document.getElementById('input').value;
-                        const parsed = JSON.parse(input);
-                        const output = JSON.stringify(parsed, null, 2);
-                        document.getElementById('output').textContent = output;
-                    } catch (error) {
-                        document.getElementById('output').textContent = "错误：无效的JSON格式";
-                    }
-                }
-            </script>
         `
     },
     'base64.html': {
@@ -72,27 +48,52 @@ const PAGE_CONFIGS = {
                 <h1>Base64 编码/解码</h1>
                 <div>
                     <textarea id="base64-input" placeholder="输入文本"></textarea>
-                    <button id="encode-base64-btn">编码</button>
-                    <button id="decode-base64-btn">解码</button>
+                    <button onclick="encodeBase64()">编码</button>
+                    <button onclick="decodeBase64()">解码</button>
                     <textarea id="output" placeholder="结果将显示在这里" readonly></textarea>
                 </div>
             </div>
-            <script>
-                document.getElementById('encode-base64-btn').addEventListener('click', function () {
-                    const input = document.getElementById('base64-input').value;
-                    const output = btoa(input);
-                    document.getElementById('output').value = output;
-                });
-
-                document.getElementById('decode-base64-btn').addEventListener('click', function () {
-                    const input = document.getElementById('base64-input').value;
-                    const output = atob(input);
-                    document.getElementById('output').value = output;
-                });
-            </script>
         `
     }
 };
+
+// URL编码/解码函数
+function urlEncode() {
+    const input = document.getElementById('input').value;
+    const output = encodeURIComponent(input);
+    document.getElementById('output').value = output;
+}
+
+function urlDecode() {
+    const input = document.getElementById('input').value;
+    const output = decodeURIComponent(input);
+    document.getElementById('output').value = output;
+}
+
+// JSON格式化函数
+function formatJson() {
+    try {
+        const input = document.getElementById('input').value;
+        const parsed = JSON.parse(input);
+        const output = JSON.stringify(parsed, null, 2);
+        document.getElementById('output').textContent = output;
+    } catch (error) {
+        document.getElementById('output').textContent = "错误：无效的JSON格式";
+    }
+}
+
+// Base64编码/解码函数
+function encodeBase64() {
+    const input = document.getElementById('base64-input').value;
+    const output = btoa(input);
+    document.getElementById('output').value = output;
+}
+
+function decodeBase64() {
+    const input = document.getElementById('base64-input').value;
+    const output = atob(input);
+    document.getElementById('output').value = output;
+}
 
 // 检查Handlebars是否加载
 async function ensureHandlebarsLoaded() {
