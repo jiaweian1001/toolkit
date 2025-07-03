@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Base64 编码/解码 | Toolkit</title>
+    <link rel="stylesheet" href="style.css?v=20250703" type="text/css">
+    <script src="sidebar.js"></script>
+</head>
+
+<body>
+    <div id="sidebar-placeholder"></div>
+    <div id="content">
+        <h1>Base64 编码/解码</h1>
+        <div>
+            <textarea id="base64-input" placeholder="输入文本"></textarea>
+            <button id="encode-base64-btn">编码</button>
+            <button id="decode-base64-btn">解码</button>
+            <textarea id="output" placeholder="结果将显示在这里" readonly></textarea>
+        </div>
+    </div>
+    <script>
+        document.getElementById('encode-base64-btn').addEventListener('click', function () {
+            const input = document.getElementById('base64-input').value;
+            const output = btoa(input);
+            document.getElementById('output').value = output;
+        });
+
+        document.getElementById('decode-base64-btn').addEventListener('click', function () {
+            const input = document.getElementById('base64-input').value;
+            const output = atob(input);
+            document.getElementById('output').value = output;
+        });
+    </script>
+
+</body>
+
+</html>
