@@ -49,23 +49,23 @@ button:hover {
 }
 
 
-body #sidebar-placeholder > #sidebar {
+body  #sidebar {
     width: 200px !important;
     background: #f8f9fa !important;
     padding: 1rem !important;
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1) !important;
 }
 
-body #sidebar-placeholder > #sidebar ul {
+body  #sidebar ul {
     list-style: none !important;
     padding: 0 !important;
 }
 
-body #sidebar-placeholder > #sidebar li {
+body  #sidebar li {
     margin: 0.5rem 0 !important;
 }
 
-body #sidebar-placeholder > #sidebar a {
+body  #sidebar a {
     text-decoration: none !important;
     color: #333 !important;
     display: block !important;
@@ -73,6 +73,6 @@ body #sidebar-placeholder > #sidebar a {
     border-radius: 4px !important;
 }
 
-body #sidebar-placeholder > #sidebar a:hover {
+body  #sidebar a:hover {
     background: #e9ecef !important;
 }
