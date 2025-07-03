@@ -1,37 +1,14 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>URL 编码/解码工具</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="sidebar.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js"></script>
+    <script src="app.js"></script>
 </head>
 
 <body>
-    <div id="sidebar-placeholder"></div>
-    <div id="content">
-        <h1>URL 编码/解码工具</h1>
-        <textarea id="input" placeholder="输入需要编码或解码的内容"></textarea>
-        <div>
-            <button onclick="encode()">编码</button>
-            <button onclick="decode()">解码</button>
-        </div>
-        <textarea id="output" placeholder="结果将显示在这里" readonly></textarea>
-    </div>
-    <script>
-        function encode() {
-            const input = document.getElementById('input').value;
-            const output = encodeURIComponent(input);
-            document.getElementById('output').value = output;
-        }
-        function decode() {
-            const input = document.getElementById('input').value;
-            const output = decodeURIComponent(input);
-            document.getElementById('output').value = output;
-        }
-    </script>
+    <!-- 内容将通过app.js动态加载 -->
 </body>
 
 </html>
