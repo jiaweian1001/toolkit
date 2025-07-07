@@ -50,9 +50,13 @@ function encodeBase64() {
     try {
         let processedInput = input;
         if (useGzip) {
-            // 使用pako库进行Gzip压缩，并将二进制数据转换为Base64字符串
-            const compressed = pako.gzip(new TextEncoder().encode(input));
-            processedInput = btoa(String.fromCharCode(...compressed));
+            try {
+                const compressed = pako.gzip(new TextEncoder().encode(input));
+                processedInput = btoa(String.fromCharCode(...compressed));
+            } catch (e) {
+                processedInput = btoa(unescape(encodeURIComponent(input)));
+                console.warn('Gzip压缩失败，使用普通Base64编码:', e);
+            }
         } else {
             processedInput = btoa(unescape(encodeURIComponent(processedInput)));
         }
@@ -68,20 +72,39 @@ function decodeBase64() {
     try {
         let decoded = '';
         if (useGzip) {
-            // 将Base64字符串还原为二进制数据，再进行Gzip解压
-            const binaryString = atob(input);
-            const bytes = new Uint8Array(binaryString.length);
-            for (let i = 0; i < binaryString.length; i++) {
-                bytes[i] = binaryString.charCodeAt(i);
+            try {
+                const binaryString = atob(input);
+                const bytes = new Uint8Array(binaryString.length);
+                for (let i = 0; i < binaryString.length; i++) {
+                    bytes[i] = binaryString.charCodeAt(i);
+                }
+                const decompressed = pako.ungzip(bytes);
+                decoded = new TextDecoder().decode(decompressed);
+            } catch (e) {
+                decoded = decodeURIComponent(escape(atob(input)));
+                console.warn('Gzip解压失败，使用普通Base64解码:', e);
             }
-            const decompressed = pako.ungzip(bytes);
-            decoded = new TextDecoder().decode(decompressed);
         } else {
-            decoded = decodeURIComponent(escape(atob(input)));
+            try {
+                decoded = decodeURIComponent(escape(atob(input)));
+            } catch (e) {
+                let partialInput = input;
+                while (partialInput.length > 0) {
+                    try {
+                        decoded = decodeURIComponent(escape(atob(partialInput)));
+                        break;
+                    } catch (innerError) {
+                        partialInput = partialInput.slice(0, -1);
+                    }
+                }
+                if (partialInput.length === 0) {
+                    throw new Error('无法解码任何部分');
+                }
+            }
         }
         document.getElementById('output').value = decoded;
     } catch (e) {
-        document.getElementById('output').value = "解码失败，内容可能不是有效的Base64字符串";
+        document.getElementById('output').value = `解码失败：${e.message}`;
     }
 }
 
