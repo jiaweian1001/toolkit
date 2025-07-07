@@ -65,11 +65,28 @@ function decodeBase64() {
     const input = document.getElementById('base64-input').value;
     const useGzip = document.getElementById('use-gzip').checked;
     try {
-        let decoded = decodeURIComponent(escape(atob(input)));
+        let decoded = '';
+        let remainingInput = input;
+        while (remainingInput.length > 0) {
+            try {
+                const chunk = remainingInput.substring(0, 4); // 尝试解码4个字符的块
+                const partialDecoded = decodeURIComponent(escape(atob(chunk)));
+                decoded += partialDecoded;
+                remainingInput = remainingInput.substring(4);
+            } catch (e) {
+                // 跳过无效的字符
+                remainingInput = remainingInput.substring(1);
+            }
+        }
         if (useGzip) {
-            // 使用pako库进行Gzip解压
-            const compressed = new Uint8Array(decoded.split('').map(c => c.charCodeAt(0)));
-            decoded = pako.ungzip(compressed, { to: 'string' });
+            try {
+                // 使用pako库进行Gzip解压
+                const compressed = new Uint8Array(decoded.split('').map(c => c.charCodeAt(0)));
+                decoded = pako.ungzip(compressed, { to: 'string' });
+            } catch (e) {
+                // 保留已解压的部分数据
+                console.warn("部分Gzip解压失败，保留已解压的数据");
+            }
         }
         document.getElementById('output').value = decoded;
     } catch (e) {
