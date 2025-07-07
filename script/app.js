@@ -50,12 +50,13 @@ function encodeBase64() {
     try {
         let processedInput = input;
         if (useGzip) {
-            // 使用pako库进行Gzip压缩
-            const compressed = pako.gzip(input);
-            processedInput = String.fromCharCode.apply(null, compressed);
+            // 使用pako库进行Gzip压缩，并将二进制数据转换为Base64字符串
+            const compressed = pako.gzip(new TextEncoder().encode(input));
+            processedInput = btoa(String.fromCharCode(...compressed));
+        } else {
+            processedInput = btoa(unescape(encodeURIComponent(processedInput)));
         }
-        const output = btoa(unescape(encodeURIComponent(processedInput)));
-        document.getElementById('output').value = output;
+        document.getElementById('output').value = processedInput;
     } catch (e) {
         document.getElementById('output').value = "编码失败，内容可能包含无法处理的字符";
     }
@@ -66,27 +67,17 @@ function decodeBase64() {
     const useGzip = document.getElementById('use-gzip').checked;
     try {
         let decoded = '';
-        let remainingInput = input;
-        while (remainingInput.length > 0) {
-            try {
-                const chunk = remainingInput.substring(0, 4); // 尝试解码4个字符的块
-                const partialDecoded = decodeURIComponent(escape(atob(chunk)));
-                decoded += partialDecoded;
-                remainingInput = remainingInput.substring(4);
-            } catch (e) {
-                // 跳过无效的字符
-                remainingInput = remainingInput.substring(1);
-            }
-        }
         if (useGzip) {
-            try {
-                // 使用pako库进行Gzip解压
-                const compressed = new Uint8Array(decoded.split('').map(c => c.charCodeAt(0)));
-                decoded = pako.ungzip(compressed, { to: 'string' });
-            } catch (e) {
-                // 保留已解压的部分数据
-                console.warn("部分Gzip解压失败，保留已解压的数据");
+            // 将Base64字符串还原为二进制数据，再进行Gzip解压
+            const binaryString = atob(input);
+            const bytes = new Uint8Array(binaryString.length);
+            for (let i = 0; i < binaryString.length; i++) {
+                bytes[i] = binaryString.charCodeAt(i);
             }
+            const decompressed = pako.ungzip(bytes);
+            decoded = new TextDecoder().decode(decompressed);
+        } else {
+            decoded = decodeURIComponent(escape(atob(input)));
         }
         document.getElementById('output').value = decoded;
     } catch (e) {
