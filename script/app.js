@@ -46,9 +46,15 @@ function formatJson() {
 // Base64编码/解码函数
 function encodeBase64() {
     const input = document.getElementById('base64-input').value;
-    // 先将UTF-8字符串转为Latin1字符串再btoa
+    const useGzip = document.getElementById('use-gzip').checked;
     try {
-        const output = btoa(unescape(encodeURIComponent(input)));
+        let processedInput = input;
+        if (useGzip) {
+            // 使用pako库进行Gzip压缩
+            const compressed = pako.gzip(input);
+            processedInput = String.fromCharCode.apply(null, compressed);
+        }
+        const output = btoa(unescape(encodeURIComponent(processedInput)));
         document.getElementById('output').value = output;
     } catch (e) {
         document.getElementById('output').value = "编码失败，内容可能包含无法处理的字符";
@@ -57,9 +63,15 @@ function encodeBase64() {
 
 function decodeBase64() {
     const input = document.getElementById('base64-input').value;
+    const useGzip = document.getElementById('use-gzip').checked;
     try {
-        const output = decodeURIComponent(escape(atob(input)));
-        document.getElementById('output').value = output;
+        let decoded = decodeURIComponent(escape(atob(input)));
+        if (useGzip) {
+            // 使用pako库进行Gzip解压
+            const compressed = new Uint8Array(decoded.split('').map(c => c.charCodeAt(0)));
+            decoded = pako.ungzip(compressed, { to: 'string' });
+        }
+        document.getElementById('output').value = decoded;
     } catch (e) {
         document.getElementById('output').value = "解码失败，内容可能不是有效的Base64字符串";
     }

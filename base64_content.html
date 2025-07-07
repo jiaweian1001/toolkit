@@ -2,6 +2,9 @@
     <h1>Base64 编码/解码</h1>
     <div>
         <textarea id="base64-input" placeholder="输入文本"></textarea>
+        <div>
+            <input type="checkbox" id="use-gzip"> <label for="use-gzip">启用Gzip压缩</label>
+        </div>
         <button onclick="encodeBase64()">编码</button>
         <button onclick="decodeBase64()">解码</button>
         <textarea id="output" placeholder="结果将显示在这里" readonly></textarea>
